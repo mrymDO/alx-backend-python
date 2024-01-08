@@ -55,12 +55,15 @@ class TestMemoize(unittest.TestCase):
         """test memoize function"""
 
         class TestClass:
+            """test class"""
 
             def a_method(self):
+                """method that return 42"""
                 return 42
 
             @memoize
             def a_property(self):
+                """a_property method"""
                 return self.a_method()
 
         mocked_a_method = Mock(return_value=42)
