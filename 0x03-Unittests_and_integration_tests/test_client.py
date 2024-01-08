@@ -30,33 +30,26 @@ class TestGithubOrgClient(unittest.TestCase):
             self.assertEqual(response, result.get("repos_url"))
 
     @patch("client.get_json")
-    def test_public_repos(self, get_json_mock):
-        """Test method returns correct output"""
-        with patch("client.get_json") as get_json_mock:
-            get_json_mock.return_value = [
-                {"name": "repo_0"},
-                {"name": "repo_1"},
-                {"name": "repo_2"},
-            ]
+    @patch(
+        "client.GithubOrgClient._public_repos_url", new_callable=PropertyMock)
+    def test_public_repos(self, mock_public_repos_url, mock_get_json):
+        """Test GithubOrgClient.public_repos"""
 
-            with patch(
-                "client.GithubOrgClient._public_repos_url",
-                new_callable=PropertyMock
-            ) as mock_public_repos_url:
+        mock_public_repos_url.return_value = "http://example.com/repos"
 
-                mock_public_repos_url.return_value = [
-                    {"name": "repo_0"},
-                    {"name": "repo_1"},
-                    {"name": "repo_2"},
-                ]
+        mock_get_json.return_value = [
+            {"name": "repo_0", "license": {"key": "MIT"}},
+            {"name": "repo_1", "license": {"key": "GPL"}},
+            {"name": "repo_2", "license": {"key": "MIT"}},
+        ]
 
-                obj = GithubOrgClient("abc")
+        obj = GithubOrgClient("abc")
 
-                result = obj.public_repos()
+        result = obj.public_repos(license="MIT")
 
-                self.assertEqual(result, [repo['name'] for repo in mock_public_repos_url.return_value])
-                mock_public_repos_url.assert_called_once()
-                get_json_mock.assert_called_once()
+        self.assertEqual(result, ["repo_0", "repo_2"])
+        mock_public_repos_url.assert_called_once()
+        mock_get_json.assert_called_once_with("http://example.com/repos")
 
 
 if __name__ == '__main__':
