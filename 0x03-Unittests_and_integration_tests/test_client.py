@@ -48,7 +48,7 @@ class TestGithubOrgClient(unittest.TestCase):
         result = obj.public_repos(license="MIT")
 
         self.assertEqual(result, ["repo_0", "repo_2"])
-        mock_public_repos_url.assert_called_once()
+        mock_public_repos_url.assert_called_once_with()
         mock_get_json.assert_called_once_with("http://example.com/repos")
 
 
