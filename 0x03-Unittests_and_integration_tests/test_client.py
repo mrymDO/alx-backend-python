@@ -2,9 +2,11 @@
 """Parameterize and patch as decorators"""
 
 import unittest
-from unittest.mock import patch, MagicMock, PropertyMock
+from unittest.mock import patch, MagicMock, PropertyMock, Mock
 from client import GithubOrgClient
-from parameterized import parameterized
+from parameterized import parameterized, parameterized_class
+
+from fixtures import org_payload, repos_payload, expected_repos, apache2_repos
 
 
 class TestGithubOrgClient(unittest.TestCase):
@@ -59,6 +61,40 @@ class TestGithubOrgClient(unittest.TestCase):
         """Test GithubOrgClient.has_license"""
         result = GithubOrgClient.has_license(repo, license_key)
         self.assertEqual(result, expected_result)
+
+    @classmethod
+    def setUpClass(cls):
+        """Set up the class"""
+        cls.get_patcher = patch("requests.get")
+
+        cls.mock_get = cls.get_patcher.start()
+        cls.mock_get.side_effect = cls.mock_requests_get_json
+
+    @classmethod
+    def tearDownClass(cls):
+        """Tear down the class"""
+        cls.get_patcher.stop()
+
+    @staticmethod
+    def mock_requests_get_json(url):
+        """Mock requests.get(url).json() based on the provided fixtures"""
+        if url == "https://api.github.com/orgs/example_org":
+            return org_payload
+        elif url == "https://api.github.com/orgs/example_org/repos":
+            return repos_payload
+        elif url == "https://api.github.com/orgs/example_org/repos/apache2":
+            return apache2_repos
+        else:
+            raise ValueError(f"Unexpected URL: {url}")
+
+    def test_public_repos_integration(self):
+        """Integration test for GithubOrgClient.public_repos"""
+
+        obj = GithubOrgClient("example_org")
+
+        result = obj.public_repos(license="MIT")
+
+        self.assertEqual(result, expected_repos)
 
 
 if __name__ == '__main__':
