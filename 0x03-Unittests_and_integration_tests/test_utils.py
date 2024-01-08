@@ -15,7 +15,6 @@ class TestAccessNestedMap(unittest.TestCase):
         ({"a": {"b": 2}}, ("a",), {"b": 2}),
         ({"a": {"b": 2}}, ("a", "b"), 2),
     ])
-
     def test_access_nested_map(self, nested_map, path, expected_result):
         """test access nested map"""
         self.assertEqual(access_nested_map(nested_map, path), expected_result)
@@ -24,13 +23,15 @@ class TestAccessNestedMap(unittest.TestCase):
         ({}, ("a",), KeyError, "'a'"),
         ({"a": 1}, ("a", "b"), KeyError, "'b'"),
     ])
-
-    def test_access_nested_map_exception(self, nested_map, path, expected_exception, expected_message):
+    def test_access_nested_map_exception(
+            self, nested_map, path, expected_exception, expected_message
+            ):
         """Test that a KeyError is raised with the expected message"""
         with self.assertRaises(expected_exception) as context:
             access_nested_map(nested_map, path)
 
         self.assertEqual(str(context.exception), expected_message)
+
 
 class TestGetJson(unittest.TestCase):
     """Test for utils.get_json"""
@@ -39,7 +40,6 @@ class TestGetJson(unittest.TestCase):
             ("http://example.com", {"payload": True}),
             ("http://holberton.io", {"payload": False}),
         ])
-
     def test_get_json(self, url, expected):
         """Test that utils.get_json returns the expected result"""
         mock_response = Mock()
