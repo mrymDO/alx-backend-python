@@ -96,6 +96,26 @@ class TestGithubOrgClient(unittest.TestCase):
 
         self.assertEqual(result, expected_repos)
 
+    def test_public_repos(self):
+        """Test GithubOrgClient.public_repos"""
+        obj = GithubOrgClient("example_org")
+
+        expected_result = expected_repos
+
+        result = obj.public_repos()
+
+        self.assertEqual(result, expected_result)
+
+    def test_public_repos_with_license(self):
+        """Test GithubOrgClient.public_repos with license argument"""
+        obj = GithubOrgClient("example_org")
+
+        expected_result = apache2_repos
+
+        result = obj.public_repos(license="apache-2.0")
+
+        self.assertEqual(result, expected_result)
+
 
 if __name__ == '__main__':
     unittest.main()
