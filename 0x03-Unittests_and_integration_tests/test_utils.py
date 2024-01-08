@@ -48,6 +48,7 @@ class TestGetJson(unittest.TestCase):
             self.assertEqual(get_json(url), expected)
             mock_response.json.assert_called_once()
 
+
 class TestMemoize(unittest.TestCase):
     """Test for utils.memoize"""
 
@@ -58,12 +59,12 @@ class TestMemoize(unittest.TestCase):
             """test class"""
 
             def a_method(self):
-                """method that return 42"""
+                """return 42"""
                 return 42
 
             @memoize
             def a_property(self):
-                """a_property method"""
+                """return memoized property"""
                 return self.a_method()
 
         mocked_a_method = Mock(return_value=42)
